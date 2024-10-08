@@ -1,6 +1,8 @@
 package ru.paysonix.test.test_app.web.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.paysonix.test.test_app.common.SignatureProcessingState;
@@ -19,8 +21,19 @@ import static java.util.Comparator.comparing;
 public class SignatureProcessingController {
     private final HashingService hashingService;
 
+    @Value("${test-app.token}")
+    private String token;
+
     @PostMapping(value = "/{operationId}/")
-    public ResponseEntity<SignatureProcessResponseDTO> makeSignature(@PathVariable("operationId") Long id, @RequestBody List<SignatureProcessRequestDTO> formParams) {
+    public ResponseEntity<SignatureProcessResponseDTO> makeSignature(@RequestHeader(value = "Token") String tokenHeader,
+                                                                     @PathVariable("operationId") Long id,
+                                                                     @RequestBody List<SignatureProcessRequestDTO> formParams) {
+        if (!tokenHeader.equals(token)) {
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN.value())
+                    .build();
+        }
+
         var sortedFormParams = formParams.stream()
                 .sorted(comparing(SignatureProcessRequestDTO::getFormFieldName))
                 .toList();
