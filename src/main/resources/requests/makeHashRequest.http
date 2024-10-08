@@ -1,5 +1,6 @@
 POST http://localhost:8481/api/v1/signature/1/
 Content-Type: application/json; charset=utf-8
+Token: secretKey
 
 [
   {
