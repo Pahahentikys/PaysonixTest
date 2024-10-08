@@ -1,0 +1,24 @@
+POST http://localhost:8481/api/v1/signature/1/
+Content-Type: application/json; charset=utf-8
+
+[
+  {
+    "formFieldName": "firstName",
+    "formFieldValue": "Pavel"
+  },
+
+  {
+    "formFieldName": "lastName",
+    "formFieldValue": "Krasilnikov"
+  },
+
+  {
+    "formFieldName": "sex",
+    "formFieldValue": "male"
+  },
+
+  {
+    "formFieldName": "city",
+    "formFieldValue": "Kemerovo"
+  }
+]
