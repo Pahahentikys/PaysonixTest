@@ -1,4 +1,4 @@
-package ru.paysonix.test.test_app.configuration;
+package ru.paysonix.test.test_app.configuration.security;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

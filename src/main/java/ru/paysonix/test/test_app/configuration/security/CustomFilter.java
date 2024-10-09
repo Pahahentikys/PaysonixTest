@@ -1,4 +1,4 @@
-package ru.paysonix.test.test_app.configuration;
+package ru.paysonix.test.test_app.configuration.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.filter.OncePerRequestFilter;
