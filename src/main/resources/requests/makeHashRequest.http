@@ -1,4 +1,4 @@
-POST http://localhost:8481/api/v1/signature/1/
+POST http://localhost:8481/api/v1/signature/1
 Content-Type: application/json; charset=utf-8
 #Содержит Base64 hash из token в конфигурации. Пример некооректного токена: c2VjcmV0S2V5
 Token: dG9rZW4=

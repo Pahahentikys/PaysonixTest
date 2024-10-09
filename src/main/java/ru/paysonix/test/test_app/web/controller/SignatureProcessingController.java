@@ -32,7 +32,7 @@ public class SignatureProcessingController {
     @Value("${test-app.form.secret.key}")
     private String storedFormSecretKey;
 
-    @PostMapping(value = "/{operationId}/")
+    @PostMapping(value = "/{operationId}")
     public ResponseEntity<SignatureProcessResponseDTO> makeSignature(@RequestHeader(value = "Token") String tokenHeader,
                                                                      @PathVariable("operationId") Long id,
                                                                      @RequestBody SignatureProcessRequestDTO requestDTO) {
