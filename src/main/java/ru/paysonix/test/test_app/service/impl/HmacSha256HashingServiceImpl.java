@@ -24,7 +24,7 @@ public class HmacSha256HashingServiceImpl implements HashingService {
             mac.init(secretKeySpec);
             return HexFormat.of().formatHex(mac.doFinal(inputString.getBytes(StandardCharsets.UTF_8)));
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("В процессе получения хэша возникла ошибка", e);
         }
     }
 }
