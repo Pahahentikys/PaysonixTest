@@ -1,7 +1,6 @@
 package ru.paysonix.test.test_app.web.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.paysonix.test.test_app.common.SignatureProcessingState;
@@ -22,14 +21,6 @@ public class SignatureProcessingController {
     public ResponseEntity<SignatureProcessResponseDTO> makeSignature(@RequestHeader(value = "Token") String tokenHeader,
                                                                      @PathVariable("operationId") Long id,
                                                                      @RequestBody SignatureProcessRequestDTO requestDTO) {
-        if (!webSignatureProcessingService.hasValidTokenInHeader(tokenHeader)) {
-            return ResponseEntity
-                    .status(HttpStatus.FORBIDDEN.value())
-                    .body(SignatureProcessResponseDTO.builder()
-                            .status(SignatureProcessingState.ERROR.getName())
-                            .build());
-        }
-
         var signature = webSignatureProcessingService.processSignatureEncodedAsBase64(requestDTO.getForm());
 
         return ResponseEntity.ok(SignatureProcessResponseDTO.builder()
