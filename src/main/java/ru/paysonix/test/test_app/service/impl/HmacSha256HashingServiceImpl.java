@@ -14,7 +14,6 @@ import java.security.NoSuchAlgorithmException;
 public class HmacSha256HashingServiceImpl implements HashingService {
 
     private static final String HMAC_SHA_256 = "HmacSHA256";
-    private static final String HASHING_KEY = "hmackKey";
 
     private static String bytesToHex(byte[] bytes) {
         StringBuilder hexString = new StringBuilder();
@@ -30,8 +29,8 @@ public class HmacSha256HashingServiceImpl implements HashingService {
     }
 
     @Override
-    public @NonNull String makeHash(@NonNull String inputString) {
-        SecretKeySpec secretKeySpec = new SecretKeySpec(HASHING_KEY.getBytes(StandardCharsets.UTF_8), HMAC_SHA_256);
+    public @NonNull String makeHash(@NonNull String inputString, @NonNull String secretKey) {
+        SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), HMAC_SHA_256);
         try {
             Mac mac = Mac.getInstance(HMAC_SHA_256);
             mac.init(secretKeySpec);

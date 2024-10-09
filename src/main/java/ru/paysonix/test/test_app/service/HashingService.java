@@ -5,5 +5,5 @@ import lombok.NonNull;
 public interface HashingService {
 
     @NonNull
-    String makeHash(@NonNull String inputString);
+    String makeHash(@NonNull String inputString, @NonNull String secretKey);
 }
