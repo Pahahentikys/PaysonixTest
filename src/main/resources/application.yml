@@ -4,4 +4,8 @@ spring:
 server:
   port: 8481
 test-app:
-  token: secretKey
+  form:
+    secret:
+      key: hmackSecretKey
+  header:
+    token: token
