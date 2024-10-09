@@ -13,7 +13,9 @@ import ru.paysonix.test.test_app.web.dto.SignatureProcessResponseDTO;
 import ru.paysonix.test.test_app.web.dto.SignatureResponseDTO;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparing;
 
@@ -45,19 +47,17 @@ public class SignatureProcessingController {
                 .sorted(comparing(FormFiledDTO::getFormFieldName))
                 .toList();
 
-        var signaturesResponse = sortedFormParams.stream()
-                .map(fp -> {
-                    var hash = hashingService.makeHash("%s=%s".formatted(fp.getFormFieldName(), fp.getFormFieldValue()), storedFormSecretKey);
+        var preparedStringForSignature = sortedFormParams.stream()
+                .map(ff -> "%s=%s".formatted(ff.getFormFieldName(), ff.getFormFieldValue()))
+                .collect(Collectors.joining("&"));
 
-                    return SignatureResponseDTO.builder()
-                            .signature(hash)
-                            .build();
-                }).toList();
-
+        var signature = hashingService.makeHash(preparedStringForSignature, storedFormSecretKey);
 
         return ResponseEntity.ok(SignatureProcessResponseDTO.builder()
                 .status(SignatureProcessingState.SUCCESS.getName())
-                .result(signaturesResponse)
+                .result(Arrays.asList(SignatureResponseDTO.builder()
+                        .signature(signature)
+                        .build()))
                 .build());
     }
 
