@@ -8,6 +8,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 @RequiredArgsConstructor
 public class CustomFilter extends OncePerRequestFilter {
@@ -19,7 +21,9 @@ public class CustomFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         var reqHeader = request.getHeader(CUSTOM_TOKEN_HEADER);
 
-        if (!reqHeader.equals(storedHeaderToken)) {
+        var decodedTokenFromHeader = new String(Base64.getDecoder().decode(reqHeader.getBytes(StandardCharsets.UTF_8)));
+
+        if (!decodedTokenFromHeader.equals(storedHeaderToken)) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
