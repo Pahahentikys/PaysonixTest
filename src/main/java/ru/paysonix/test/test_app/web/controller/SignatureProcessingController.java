@@ -15,6 +15,7 @@ import ru.paysonix.test.test_app.web.dto.SignatureResponseDTO;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparing;
@@ -43,15 +44,7 @@ public class SignatureProcessingController {
                             .build());
         }
 
-        var sortedFormParams = requestDTO.getForm().stream()
-                .sorted(comparing(FormFiledDTO::getFormFieldName))
-                .toList();
-
-        var preparedStringForSignature = sortedFormParams.stream()
-                .map(ff -> "%s=%s".formatted(ff.getFormFieldName(), ff.getFormFieldValue()))
-                .collect(Collectors.joining("&"));
-
-        var signature = hashingService.makeHash(preparedStringForSignature, storedFormSecretKey);
+        var signature = hashingService.makeHash(makeFormattedString(requestDTO.getForm()), storedFormSecretKey);
 
         return ResponseEntity.ok(SignatureProcessResponseDTO.builder()
                 .status(SignatureProcessingState.SUCCESS.getName())
@@ -59,6 +52,16 @@ public class SignatureProcessingController {
                         .signature(signature)
                         .build()))
                 .build());
+    }
+
+    private String makeFormattedString(List<FormFiledDTO> formFields) {
+        var sortedFormParams = formFields.stream()
+                .sorted(comparing(FormFiledDTO::getFormFieldName))
+                .toList();
+
+        return sortedFormParams.stream()
+                .map(ff -> "%s=%s".formatted(ff.getFormFieldName(), ff.getFormFieldValue()))
+                .collect(Collectors.joining("&"));
     }
 
     private boolean hasValidTokenInHeader(String tokenHeader) {
