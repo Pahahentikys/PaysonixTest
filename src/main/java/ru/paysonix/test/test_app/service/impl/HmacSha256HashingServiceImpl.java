@@ -6,6 +6,7 @@ import ru.paysonix.test.test_app.service.HashingService;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
@@ -30,11 +31,11 @@ public class HmacSha256HashingServiceImpl implements HashingService {
 
     @Override
     public @NonNull String makeHash(@NonNull String inputString) {
-        SecretKeySpec secretKeySpec = new SecretKeySpec(HASHING_KEY.getBytes(), HMAC_SHA_256);
+        SecretKeySpec secretKeySpec = new SecretKeySpec(HASHING_KEY.getBytes(StandardCharsets.UTF_8), HMAC_SHA_256);
         try {
             Mac mac = Mac.getInstance(HMAC_SHA_256);
             mac.init(secretKeySpec);
-            return bytesToHex(mac.doFinal(inputString.getBytes()));
+            return bytesToHex(mac.doFinal(inputString.getBytes(StandardCharsets.UTF_8)));
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {
             throw new RuntimeException(e);
         }
