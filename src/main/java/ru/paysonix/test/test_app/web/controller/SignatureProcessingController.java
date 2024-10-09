@@ -18,8 +18,7 @@ public class SignatureProcessingController {
     private final WebSignatureProcessingService webSignatureProcessingService;
 
     @PostMapping(value = "/{operationId}")
-    public ResponseEntity<SignatureProcessResponseDTO> makeSignature(@RequestHeader(value = "Token") String tokenHeader,
-                                                                     @PathVariable("operationId") Long id,
+    public ResponseEntity<SignatureProcessResponseDTO> makeSignature(@PathVariable("operationId") Long id,
                                                                      @RequestBody SignatureProcessRequestDTO requestDTO) {
         var signature = webSignatureProcessingService.processSignatureEncodedAsBase64(requestDTO.getForm());
 
