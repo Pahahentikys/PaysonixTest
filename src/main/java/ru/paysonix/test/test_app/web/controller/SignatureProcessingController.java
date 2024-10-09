@@ -11,6 +11,8 @@ import ru.paysonix.test.test_app.web.dto.SignatureProcessRequestDTO;
 import ru.paysonix.test.test_app.web.dto.SignatureProcessResponseDTO;
 import ru.paysonix.test.test_app.web.dto.SignatureResponseDTO;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 
 import static java.util.Comparator.comparing;
@@ -21,17 +23,22 @@ import static java.util.Comparator.comparing;
 public class SignatureProcessingController {
     private final HashingService hashingService;
 
-    @Value("${test-app.token}")
-    private String token;
+    @Value("${test-app.header.token}")
+    private String storedHeaderToken;
+
+    @Value("${test-app.form.secret.key}")
+    private String storedFormSecretKey;
 
     @PostMapping(value = "/{operationId}/")
     public ResponseEntity<SignatureProcessResponseDTO> makeSignature(@RequestHeader(value = "Token") String tokenHeader,
                                                                      @PathVariable("operationId") Long id,
                                                                      @RequestBody List<SignatureProcessRequestDTO> formParams) {
-        if (!tokenHeader.equals(token)) {
+        if (!hasValidTokenInHeader(tokenHeader)) {
             return ResponseEntity
                     .status(HttpStatus.FORBIDDEN.value())
-                    .build();
+                    .body(SignatureProcessResponseDTO.builder()
+                            .status(SignatureProcessingState.ERROR.getName())
+                            .build());
         }
 
         var sortedFormParams = formParams.stream()
@@ -40,7 +47,7 @@ public class SignatureProcessingController {
 
         var signaturesResponse = sortedFormParams.stream()
                 .map(fp -> {
-                    var hash = hashingService.makeHash("%s=%s".formatted(fp.getFormFieldName(), fp.getFormFieldValue()));
+                    var hash = hashingService.makeHash("%s=%s".formatted(fp.getFormFieldName(), fp.getFormFieldValue()), storedFormSecretKey);
 
                     return SignatureResponseDTO.builder()
                             .signature(hash)
@@ -52,5 +59,11 @@ public class SignatureProcessingController {
                 .status(SignatureProcessingState.SUCCESS.getName())
                 .result(signaturesResponse)
                 .build());
+    }
+
+    private boolean hasValidTokenInHeader(String tokenHeader) {
+        var decodedTokenFromHeader = new String(Base64.getDecoder().decode(tokenHeader.getBytes(StandardCharsets.UTF_8)));
+
+        return decodedTokenFromHeader.equals(storedHeaderToken);
     }
 }
