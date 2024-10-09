@@ -49,9 +49,13 @@ public class SignatureProcessingController {
         return ResponseEntity.ok(SignatureProcessResponseDTO.builder()
                 .status(SignatureProcessingState.SUCCESS.getName())
                 .result(Arrays.asList(SignatureResponseDTO.builder()
-                        .signature(signature)
+                        .signature(encodeAsBase64(signature))
                         .build()))
                 .build());
+    }
+
+    private String encodeAsBase64(String signature) {
+        return Base64.getEncoder().encodeToString(signature.getBytes(StandardCharsets.UTF_8));
     }
 
     private String makeFormattedString(List<FormFiledDTO> formFields) {
