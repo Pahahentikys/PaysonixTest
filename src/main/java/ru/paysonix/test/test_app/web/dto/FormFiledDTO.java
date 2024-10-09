@@ -4,11 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SignatureProcessRequestDTO {
-    private List<FormFiledDTO> form;
+public class FormFiledDTO {
+    private String formFieldName;
+
+    private String formFieldValue;
 }
