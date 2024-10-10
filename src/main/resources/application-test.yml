@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: test-app
+server:
+  port: 8481
+test-app:
+  form:
+    secret:
+      key: hmackSecretKeyTest
+  header:
+    token: tokenTest
