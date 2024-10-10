@@ -4,16 +4,16 @@ import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
 import ru.paysonix.test.test_app.common.SignatureProcessingState;
 import ru.paysonix.test.test_app.web.dto.FormFiledDTO;
 import ru.paysonix.test.test_app.web.dto.SignatureProcessRequestDTO;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.Matchers.is;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -34,9 +34,9 @@ public class SignatureProcessingControllerE2ETest extends TestAppApplicationTest
         String expectedHmacSha256EncodedAsBase64 = "NTQwZjZiZTNiNGZiOTg3YTkzMjNkOGFlYTBiZDY5NjQyYmIxZDkyZDYwYzNhODliYzllNTY1MDQ0NGZmYjhiNg==";
 
         mockMvc.perform(post("/api/v1/signature/{operationId}", operationId)
-                        .contentType(MediaType.APPLICATION_JSON)
+                        .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(makeSignatureProcessRequestDTO()))
-                        .header(AUTH_HEADER_NAME, Base64.getEncoder().encodeToString(headerForTest.getBytes(StandardCharsets.UTF_8))))
+                        .header(AUTH_HEADER_NAME, Base64.getEncoder().encodeToString(headerForTest.getBytes(UTF_8))))
                 .andExpect(jsonPath("$.status", is(SignatureProcessingState.SUCCESS.getName())))
                 .andExpect(jsonPath("$.result.[0].signature", is(expectedHmacSha256EncodedAsBase64)))
                 .andExpect(status().isOk())
@@ -49,9 +49,9 @@ public class SignatureProcessingControllerE2ETest extends TestAppApplicationTest
         String wrongHeader = "wrongHeader";
 
         mockMvc.perform(post("/api/v1/signature/{operationId}", operationId)
-                        .contentType(MediaType.APPLICATION_JSON)
+                        .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(makeSignatureProcessRequestDTO()))
-                        .header("Token", Base64.getEncoder().encodeToString(wrongHeader.getBytes(StandardCharsets.UTF_8))))
+                        .header(AUTH_HEADER_NAME, Base64.getEncoder().encodeToString(wrongHeader.getBytes(UTF_8))))
                 .andExpect(status().isForbidden())
                 .andDo(print());
     }

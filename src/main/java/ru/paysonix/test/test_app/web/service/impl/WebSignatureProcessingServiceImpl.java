@@ -7,11 +7,11 @@ import ru.paysonix.test.test_app.service.HashingService;
 import ru.paysonix.test.test_app.web.dto.FormFiledDTO;
 import ru.paysonix.test.test_app.web.service.WebSignatureProcessingService;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Comparator.comparing;
 
 @Service
@@ -28,7 +28,7 @@ public class WebSignatureProcessingServiceImpl implements WebSignatureProcessing
     }
 
     private String encodeAsBase64(String signature) {
-        return Base64.getEncoder().encodeToString(signature.getBytes(StandardCharsets.UTF_8));
+        return Base64.getEncoder().encodeToString(signature.getBytes(UTF_8));
     }
 
     private String makeFormattedString(List<FormFiledDTO> formFields) {

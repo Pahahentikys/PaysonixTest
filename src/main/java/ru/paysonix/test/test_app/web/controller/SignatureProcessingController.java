@@ -11,8 +11,10 @@ import ru.paysonix.test.test_app.web.service.WebSignatureProcessingService;
 
 import java.util.Arrays;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @RestController
-@RequestMapping(value = "api/v1/signature")
+@RequestMapping(value = "api/v1/signature", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class SignatureProcessingController {
     private final WebSignatureProcessingService webSignatureProcessingService;
