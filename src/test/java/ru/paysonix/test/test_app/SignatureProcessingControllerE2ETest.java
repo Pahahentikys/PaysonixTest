@@ -23,6 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RequiredArgsConstructor
 public class SignatureProcessingControllerE2ETest extends TestAppApplicationTests {
     private static final String AUTH_HEADER_NAME = "Token";
+    private final int operationId = 1;
 
     @Value("${test-app.header.token}")
     private String headerForTest;
@@ -30,13 +31,11 @@ public class SignatureProcessingControllerE2ETest extends TestAppApplicationTest
     @Test
     @DisplayName("POST запрос на получения хэш-суммы формы")
     void makeSignature200() throws Exception {
-        var requestForm = makeSignatureProcessRequestDTO();
-
         String expectedHmacSha256EncodedAsBase64 = "NTQwZjZiZTNiNGZiOTg3YTkzMjNkOGFlYTBiZDY5NjQyYmIxZDkyZDYwYzNhODliYzllNTY1MDQ0NGZmYjhiNg==";
 
-        mockMvc.perform(post("/api/v1/signature/1")
+        mockMvc.perform(post("/api/v1/signature/{operationId}", operationId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(requestForm))
+                        .content(mapper.writeValueAsString(makeSignatureProcessRequestDTO()))
                         .header(AUTH_HEADER_NAME, Base64.getEncoder().encodeToString(headerForTest.getBytes(StandardCharsets.UTF_8))))
                 .andExpect(jsonPath("$.status", is(SignatureProcessingState.SUCCESS.getName())))
                 .andExpect(jsonPath("$.result.[0].signature", is(expectedHmacSha256EncodedAsBase64)))
@@ -49,7 +48,7 @@ public class SignatureProcessingControllerE2ETest extends TestAppApplicationTest
     void makeSignature403() throws Exception {
         String wrongHeader = "wrongHeader";
 
-        mockMvc.perform(post("/api/v1/signature/1")
+        mockMvc.perform(post("/api/v1/signature/{operationId}", operationId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(makeSignatureProcessRequestDTO()))
                         .header("Token", Base64.getEncoder().encodeToString(wrongHeader.getBytes(StandardCharsets.UTF_8))))
