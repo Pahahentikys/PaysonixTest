@@ -12,11 +12,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 import static java.util.Objects.isNull;
+import static ru.paysonix.test.test_app.common.Constants.CUSTOM_TOKEN_HEADER;
 
 @RequiredArgsConstructor
 public class CustomFilter extends OncePerRequestFilter {
-    private static final String CUSTOM_TOKEN_HEADER = "Token";
-
     private final String storedHeaderToken;
 
     @Override

@@ -18,11 +18,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.paysonix.test.test_app.common.Constants.CUSTOM_TOKEN_HEADER;
 
 @DisplayName("E2E тест контроллера процессинга хэш-суммы")
 @RequiredArgsConstructor
 public class SignatureProcessingControllerE2ETest extends TestAppApplicationTests {
-    private static final String AUTH_HEADER_NAME = "Token";
     private final int operationId = 1;
 
     @Value("${test-app.header.token}")
@@ -36,7 +36,7 @@ public class SignatureProcessingControllerE2ETest extends TestAppApplicationTest
         mockMvc.perform(post("/api/v1/signature/{operationId}", operationId)
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(makeSignatureProcessRequestDTO()))
-                        .header(AUTH_HEADER_NAME, Base64.getEncoder().encodeToString(headerForTest.getBytes(UTF_8))))
+                        .header(CUSTOM_TOKEN_HEADER, Base64.getEncoder().encodeToString(headerForTest.getBytes(UTF_8))))
                 .andExpect(jsonPath("$.status", is(SignatureProcessingState.SUCCESS.getName())))
                 .andExpect(jsonPath("$.result.[0].signature", is(expectedHmacSha256EncodedAsBase64)))
                 .andExpect(status().isOk())
@@ -51,7 +51,7 @@ public class SignatureProcessingControllerE2ETest extends TestAppApplicationTest
         mockMvc.perform(post("/api/v1/signature/{operationId}", operationId)
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(makeSignatureProcessRequestDTO()))
-                        .header(AUTH_HEADER_NAME, Base64.getEncoder().encodeToString(wrongHeader.getBytes(UTF_8))))
+                        .header(CUSTOM_TOKEN_HEADER, Base64.getEncoder().encodeToString(wrongHeader.getBytes(UTF_8))))
                 .andExpect(status().isForbidden())
                 .andDo(print());
     }
